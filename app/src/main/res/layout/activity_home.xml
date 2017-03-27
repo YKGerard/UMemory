@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--滑动菜单  第一个子控件是主屏幕中显示的内容  第二个子控件是滑动菜单中显示的内容-->
 <android.support.v4.widget.DrawerLayout
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:android="http://schemas.android.com/apk/res/android"
@@ -7,22 +8,49 @@
     android:layout_height="match_parent"
     app:itemIconTint="@color/textColorPrimary">
 
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+    <!-- 主屏幕 CoordinatorLayout可以监听其所有子控件的各种事件，然后自动做出最为合理的响应-->
+    <android.support.design.widget.CoordinatorLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:id="@+id/activity_home"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:layout_height="match_parent">
 
-        <android.support.v7.widget.Toolbar
-            android:id="@+id/toolbar"
+        <!-- 解决遮挡问题 -->
+        <android.support.design.widget.AppBarLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:titleTextColor="@color/textColorPrimary"
-            app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
-            app:title="@string/app_name"
-            android:theme="@style/Base.ThemeOverlay.AppCompat.Dark.ActionBar"/>
+            android:layout_height="wrap_content">
 
+            <!-- ToolBar标题栏 -->
+            <android.support.v7.widget.Toolbar
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:titleTextColor="@color/textColorPrimary"
+                android:background="@color/colorBackground"
+                app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+                app:title="@string/app_name"
+                android:theme="@style/Base.ThemeOverlay.AppCompat.Dark.ActionBar"
+                app:layout_scrollFlags="scroll|enterAlways|snap"/>
+        </android.support.design.widget.AppBarLayout>
+
+        <!-- 下拉刷新 -->
+        <android.support.v4.widget.SwipeRefreshLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/swipe_refresh"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+            <!-- 滚动控件 -->
+            <android.support.v7.widget.RecyclerView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/recycler_view"
+                app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
+        </android.support.v4.widget.SwipeRefreshLayout>
+
+        <!-- 悬浮按钮 app:elevation指定一个高度值，高度越大投影范围越大-->
         <android.support.design.widget.FloatingActionButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -32,9 +60,12 @@
             android:src="@drawable/add_white"
             app:backgroundTint="@color/textColorPrimary"
             app:rippleColor="#33728dff"
+            android:elevation="8dp"
             />
-    </LinearLayout>
+    </android.support.design.widget.CoordinatorLayout>
 
+
+    <!-- 滑动菜单 layout_gravity 属性必须设置 app:menu设置菜单项  app:headerLayout设置菜单头部-->
     <android.support.design.widget.NavigationView
         android:id="@+id/nav_view"
         android:layout_width="wrap_content"
