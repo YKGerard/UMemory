@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
-import android.support.design.widget.Snackbar;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -14,19 +13,13 @@ import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Toast;
-
 import org.litepal.LitePal;
 import org.litepal.crud.DataSupport;
-
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.Random;
 
 public class HomeActivity extends AppCompatActivity {
 
@@ -40,8 +33,8 @@ public class HomeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
         LitePal.getDatabase();  //创建数据库
-        if (!DataSupport.findFirst(Memory.class).getTitle().equals("这是你的第一个记忆")){
-            Memory memory = new Memory("这是你的第一个记忆","让记忆在此绽放","记忆体","asdf");
+        if (DataSupport.findFirst(Memory.class)==null) {
+            Memory memory = new Memory("这是你的第一个记忆", "让记忆在此绽放", "记忆体", "20121212");
             memory.save();
         }
 
@@ -72,12 +65,6 @@ public class HomeActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent intent=new Intent(HomeActivity.this,PieceActivity.class);
                 startActivity(intent);
-                /*Snackbar.make(v,"Data create",Snackbar.LENGTH_LONG).setAction("Undo", new View.OnClickListener() {  //可交互提示工具
-                    @Override
-                    public void onClick(View v) {
-                        Toast.makeText(HomeActivity.this,"Data unCreate",Toast.LENGTH_LONG).show();
-                    }
-                }).show();*/
             }
         });  //设置一个悬浮按钮监听器
 
@@ -138,12 +125,12 @@ public class HomeActivity extends AppCompatActivity {
 
     //加载数据库中的数据
     private void initMemory(){
-        memoryList = DataSupport.findAll(Memory.class);
+        memoryList = DataSupport.order("id desc").find(Memory.class);//根据ID倒序排列查找并存储到memoryList中
     }
 
     //添加ToolBar菜单
     @Override
-        public boolean onCreateOptionsMenu(Menu menu) {
+    public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.toolbar,menu);
         return true;
     }
