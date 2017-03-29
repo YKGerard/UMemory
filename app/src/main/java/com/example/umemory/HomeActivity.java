@@ -1,6 +1,7 @@
 package com.example.umemory;
 
 import android.content.Intent;
+import android.graphics.Canvas;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
@@ -13,12 +14,18 @@ import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import org.litepal.LitePal;
 import org.litepal.crud.DataSupport;
+
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 public class HomeActivity extends AppCompatActivity {
@@ -33,8 +40,11 @@ public class HomeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
         LitePal.getDatabase();  //创建数据库
+        Date date = new Date();
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String time=dateFormat.format(date);
         if (DataSupport.findFirst(Memory.class)==null) {
-            Memory memory = new Memory("这是你的第一个记忆", "让记忆在此绽放", "记忆体", "20121212");
+            Memory memory = new Memory("这是你的第一个记忆", "让记忆在此绽放", "记忆体",time);
             memory.save();
         }
 
@@ -99,7 +109,52 @@ public class HomeActivity extends AppCompatActivity {
                 refreshMemory();
             }
         });  //设置一个下拉刷新监听器
+
+        ItemTouchHelper.Callback mCallback=new ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP|ItemTouchHelper.DOWN,ItemTouchHelper.RIGHT) {
+            @Override
+            public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
+                int fromPosition = viewHolder.getAdapterPosition();//得到拖动ViewHolder的position
+                int toPosition = target.getAdapterPosition();//得到目标ViewHolder的position
+                if (fromPosition < toPosition) {
+                    //分别把中间所有的item的位置重新交换
+                    for (int i = fromPosition; i < toPosition; i++) {
+                        Collections.swap(memoryList, i, i + 1);
+                    }
+                } else {
+                    for (int i = fromPosition; i > toPosition; i--) {
+                        Collections.swap(memoryList, i, i - 1);
+                    }
+                }
+                adapter.notifyItemMoved(fromPosition, toPosition);
+                //返回true表示执行拖动
+                return true;
+            }
+
+            @Override
+            public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
+                int position = viewHolder.getAdapterPosition();
+                DataSupport.deleteAll(Memory.class,"id = ?", String.valueOf(memoryList.get(position).getId()));
+                memoryList.remove(position);
+                adapter.notifyItemRemoved(position);
+            }
+
+            @Override
+            public void onChildDraw(Canvas c, RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, float dX, float dY, int actionState, boolean isCurrentlyActive) {
+                super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive);
+                if(actionState == ItemTouchHelper.ACTION_STATE_SWIPE) {
+                    //滑动时改变Item的透明度
+                    final float alpha = 1 - Math.abs(dX) / (float)viewHolder.itemView.getWidth();
+                    viewHolder.itemView.setAlpha(alpha);
+                    viewHolder.itemView.setTranslationX(dX);
+                }
+            }
+        };
+
+        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(mCallback);
+        itemTouchHelper.attachToRecyclerView(recyclerView);
     }
+
+
 
     //下拉刷新数据
     private void refreshMemory(){

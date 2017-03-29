@@ -13,6 +13,9 @@ public class Memory extends DataSupport{
     private String content;
     private String date;
 
+    public Memory(){
+        super();
+    }
     public Memory(String title,String content,String category,String date){
         this.title=title;
         this.content=content;

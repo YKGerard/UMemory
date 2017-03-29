@@ -2,7 +2,7 @@
 <android.support.design.widget.CoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/activity_piece"
+    android:id="@+id/activity_edit"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -11,13 +11,13 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/colorImage"
-        android:id="@+id/pAppBar">
+        android:id="@+id/eAppBar">
         <!-- 可折叠式标题栏 -->
         <android.support.design.widget.CollapsingToolbarLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_margin="5dp"
-            android:id="@+id/pCollapsingToolBar"
+            android:id="@+id/eCollapsingToolBar"
             android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
             app:contentScrim="@color/colorBackground"
             app:layout_scrollFlags="scroll|exitUntilCollapsed">
@@ -30,7 +30,7 @@
             <EditText
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:id="@+id/pTitle"
+                android:id="@+id/eTitle"
                 android:textSize="20dp"
                 android:textColor="@color/textColorPrimary"
                 android:background="@color/colorBackground"
@@ -46,6 +46,13 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:id="@+id/eDate"
+                android:textSize="16dp"
+                android:textColor="@color/textColorPrimary"/>
             <android.support.v7.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -56,7 +63,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_margin="5dp"
-                    android:id="@+id/pContent"
+                    android:id="@+id/eContent"
                     android:hint="请输入你此时的想法"
                     android:textSize="16dp"
                     android:textColor="@color/textColorPrimary"
@@ -70,11 +77,24 @@
     <android.support.design.widget.FloatingActionButton
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/pFab"
+        android:id="@+id/eFab"
         android:layout_margin="16dp"
         android:src="@drawable/save_white"
         app:backgroundTint="@color/textColorPrimary"
         app:rippleColor="#33728dff"
         android:layout_gravity="bottom|end"
+        android:elevation="8dp" />
+    <android.support.design.widget.FloatingActionButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/eFabEdit"
+        android:layout_marginBottom="70dp"
+        android:layout_marginRight="5dp"
+        android:layout_marginLeft="5dp"
+        android:src="@drawable/edit_white"
+        app:backgroundTint="@color/textColorPrimary"
+        app:rippleColor="#33728dff"
+        app:layout_anchor="@id/eFab"
+        app:layout_anchorGravity="top|end"
         android:elevation="8dp" />
 </android.support.design.widget.CoordinatorLayout>

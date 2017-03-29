@@ -1,6 +1,7 @@
 package com.example.umemory;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -47,7 +48,19 @@ public class MemoryAdapter extends RecyclerView.Adapter<MemoryAdapter.ViewHolder
             mContext = parent.getContext();
         }
         View view = LayoutInflater.from(mContext).inflate(R.layout.memory_item,parent,false);
-        return new ViewHolder(view);
+        final ViewHolder holder=new ViewHolder(view);
+        holder.cardView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int position = holder.getAdapterPosition();
+                Memory memory = mMemory.get(position);
+                int mid=memory.getId();
+                Intent intent=new Intent(mContext,EditActivity.class);
+                intent.putExtra("m_id",mid);
+                mContext.startActivity(intent);
+            }
+        });
+        return holder;
     }
 
     //对RecycleView子项的数据进行赋值，会在每个子项被滚动到屏幕内时执行
