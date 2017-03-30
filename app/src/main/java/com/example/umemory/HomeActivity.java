@@ -113,7 +113,7 @@ public class HomeActivity extends AppCompatActivity {
         ItemTouchHelper.Callback mCallback=new ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP|ItemTouchHelper.DOWN,ItemTouchHelper.RIGHT) {
             @Override
             public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
-                int fromPosition = viewHolder.getAdapterPosition();//得到拖动ViewHolder的position
+                /*int fromPosition = viewHolder.getAdapterPosition();//得到拖动ViewHolder的position
                 int toPosition = target.getAdapterPosition();//得到目标ViewHolder的position
                 if (fromPosition < toPosition) {
                     //分别把中间所有的item的位置重新交换
@@ -127,7 +127,8 @@ public class HomeActivity extends AppCompatActivity {
                 }
                 adapter.notifyItemMoved(fromPosition, toPosition);
                 //返回true表示执行拖动
-                return true;
+                return true;*/
+                return false;
             }
 
             @Override
@@ -197,6 +198,8 @@ public class HomeActivity extends AppCompatActivity {
             case R.id.category:
                 break;
             case R.id.search:
+                Intent intent=new Intent(this,SearchActivity.class);
+                startActivity(intent);
                 break;
             case android.R.id.home:  //导航按钮点击事件
                 drawerLayout.openDrawer(GravityCompat.START);  //展示滑动菜单
