@@ -1,4 +1,4 @@
-package com.example.umemory;
+package com.example.umemory.model;
 
 import org.litepal.crud.DataSupport;
 

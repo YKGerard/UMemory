@@ -1,9 +1,6 @@
 package com.example.umemory;
 
 import android.support.design.widget.CoordinatorLayout;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
@@ -12,6 +9,8 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.example.umemory.model.Memory;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,6 +18,8 @@ public class SearchActivity extends AppCompatActivity {
     private CoordinatorLayout coordinatorLayout;  //创建一个CoordinatorLayout的实例
     private List<Memory> memoryList = new ArrayList<>();  //创建一个List<Memory>对象
     private MemoryAdapter adapter;  //创建MemoryAdapter的实例
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

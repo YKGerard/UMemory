@@ -8,6 +8,8 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.example.umemory.model.Memory;
+
 import org.litepal.crud.DataSupport;
 
 import java.text.DateFormat;

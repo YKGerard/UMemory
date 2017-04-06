@@ -18,13 +18,15 @@ import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+
+import com.example.umemory.model.Memory;
+
 import org.litepal.LitePal;
 import org.litepal.crud.DataSupport;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -48,7 +50,9 @@ public class HomeActivity extends AppCompatActivity {
             memory.save();
         }
 
-        initMemory();
+        Intent intent=getIntent();
+        intent.getStringExtra("userId");
+        initMemory();  //加载用户记忆内容
 
         //设置滚动列表
         RecyclerView recyclerView=(RecyclerView)findViewById(R.id.recycler_view);  //获得RecyclerView的实例
@@ -86,6 +90,8 @@ public class HomeActivity extends AppCompatActivity {
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {   //当用户点击了任意菜单项时，就会回调到该方法中
                 switch(item.getItemId()){
                     case R.id.nav_person:
+                        Intent intent = new Intent(HomeActivity.this,LoginActivity.class);
+                        startActivity(intent);
                         break;
                     case R.id.nav_setting:
                         break;

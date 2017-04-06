@@ -1,4 +1,4 @@
-package com.example.umemory;
+package com.example.umemory.model;
 
 import org.litepal.crud.DataSupport;
 
@@ -11,6 +11,15 @@ public class User extends DataSupport{
     private String username;
     private String password;
     private String email;
+
+    public User(){
+        super();
+    }
+    public User(int id,String username,String password,String email){
+        this.username=username;
+        this.password=password;
+        this.email=email;
+    }
 
     public int getId() {
         return id;

@@ -9,9 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
-
-import org.w3c.dom.Text;
+import com.example.umemory.model.Memory;
 
 import java.util.List;
 
