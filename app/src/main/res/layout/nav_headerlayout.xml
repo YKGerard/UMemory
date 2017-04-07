@@ -9,17 +9,13 @@
         android:id="@+id/icon_image"
         android:src="@drawable/logo_m"
         android:layout_gravity="center"/>
-    <TextView
+    <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:id="@+id/username"
-        android:text="Gerard"/>
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:id="@+id/email"
-        android:text="hyk@gmail.com"/>
+        android:id="@+id/userInformation"
+        android:textAllCaps="false"
+        android:background="@color/colorImage"
+        android:text="登录/注册"/>
 
 </LinearLayout>

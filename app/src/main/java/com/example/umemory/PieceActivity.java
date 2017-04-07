@@ -14,11 +14,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class PieceActivity extends AppCompatActivity {
-    private EditText pTitle;
-    private EditText pContent;
-    private String title;
-    private String content;
-    private String time;
+    private EditText pTitle,pContent;
+    private String title,content,time;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

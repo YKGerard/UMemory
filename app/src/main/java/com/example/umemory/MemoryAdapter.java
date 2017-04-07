@@ -24,8 +24,7 @@ public class MemoryAdapter extends RecyclerView.Adapter<MemoryAdapter.ViewHolder
     //定义一个内部类ViewHolder
     static class ViewHolder extends RecyclerView.ViewHolder{
         CardView cardView;
-        TextView mTitle;
-        TextView mContent;
+        TextView mTitle,mContent;
 
         public ViewHolder(View itemView) {
             super(itemView);

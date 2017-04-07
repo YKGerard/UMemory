@@ -18,8 +18,10 @@ import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 
 import com.example.umemory.model.Memory;
+import com.example.umemory.model.User;
 
 import org.litepal.LitePal;
 import org.litepal.crud.DataSupport;
@@ -36,6 +38,9 @@ public class HomeActivity extends AppCompatActivity {
     private SwipeRefreshLayout swipeRefresh;//创建下拉刷新对象
     private List<Memory> memoryList = new ArrayList<>();  //创建一个List<Memory>对象
     private MemoryAdapter adapter;  //创建MemoryAdapter的实例
+    private int userId;  //创建userId变量获取用户信息
+    private Button userInformation;
+    private List<User> userInfo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,8 +55,9 @@ public class HomeActivity extends AppCompatActivity {
             memory.save();
         }
 
-        Intent intent=getIntent();
-        intent.getStringExtra("userId");
+        final Intent intent=getIntent();
+        userId=intent.getIntExtra("userId",-1);
+
         initMemory();  //加载用户记忆内容
 
         //设置滚动列表
@@ -84,20 +90,40 @@ public class HomeActivity extends AppCompatActivity {
 
         //滑动菜单内按钮
         NavigationView navView =(NavigationView)findViewById(R.id.nav_view);  //获得NavigationView实例
+        View view=navView.inflateHeaderView(R.layout.nav_headerlayout);  //动态加载滑动菜单头部
+        userInformation=(Button)view.findViewById(R.id.userInformation);  //添加登录注册点击事件
+        userInformation.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (userId!=-1){
+                    userInfo=DataSupport.where("id = ?",""+userId).find(User.class);
+                    userInformation.setText(userInfo.get(0).getUsername()+"\n"+userInfo.get(0).getEmail());
+                }else {
+                    Intent intent_login = new Intent(HomeActivity.this, LoginActivity.class);
+                    startActivity(intent_login);
+                }
+            }
+        });
         navView.setCheckedItem(R.id.nav_person);  //将person菜单项设置为默认选中
         navView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {  //设置一个菜单项选中事件的监听器
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {   //当用户点击了任意菜单项时，就会回调到该方法中
                 switch(item.getItemId()){
                     case R.id.nav_person:
-                        Intent intent = new Intent(HomeActivity.this,LoginActivity.class);
-                        startActivity(intent);
+                        Intent intent_person = new Intent(HomeActivity.this,PersonActivity.class);
+                        startActivity(intent_person);
                         break;
                     case R.id.nav_setting:
+                        Intent intent_setting = new Intent(HomeActivity.this,SettingActivity.class);
+                        startActivity(intent_setting);
                         break;
                     case R.id.nav_feedback:
+                        Intent intent_feedback = new Intent(HomeActivity.this,FeedbackActivity.class);
+                        startActivity(intent_feedback);
                         break;
                     case R.id.nav_about:
+                        Intent intent_about = new Intent(HomeActivity.this,AboutActivity.class);
+                        startActivity(intent_about);
                         break;
                     default:
                         break;
@@ -161,7 +187,15 @@ public class HomeActivity extends AppCompatActivity {
         itemTouchHelper.attachToRecyclerView(recyclerView);
     }
 
-
+    //点击返回键关闭滑动菜单
+    @Override
+    public void onBackPressed() {
+        if (drawerLayout.isDrawerOpen(GravityCompat.START)) {  //检测滑动菜单是否打开，如果打开就关闭
+            drawerLayout.closeDrawer(GravityCompat.START);
+        } else {
+            super.onBackPressed();
+        }
+    }
 
     //下拉刷新数据
     private void refreshMemory(){

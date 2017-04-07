@@ -6,4 +6,6 @@
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
     <string name="action_settings">Settings</string>
+    <string name="User_Agreement">UMemory用户协议如下\n一.本程序最终解释权在开发者手中</string>
+    <string name="f_content">请告诉我们您遇到的问题或想反馈的意见。</string>
 </resources>

@@ -15,7 +15,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SearchActivity extends AppCompatActivity {
-    private CoordinatorLayout coordinatorLayout;  //创建一个CoordinatorLayout的实例
     private List<Memory> memoryList = new ArrayList<>();  //创建一个List<Memory>对象
     private MemoryAdapter adapter;  //创建MemoryAdapter的实例
 

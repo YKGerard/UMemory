@@ -14,7 +14,13 @@
     <style name="button">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:background">@color/colorBackground</item>
+        <item name="android:background">@color/colorImage</item>
+    </style>
+
+    <style name="button2">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:background">@color/colorImage</item>
     </style>
 
     <style name="AppTheme.NoActionBar">
@@ -30,5 +36,18 @@
         <item name="android:layout_marginBottom">10sp</item>
         <item name="android:layout_marginLeft">20sp</item>
         <item name="android:layout_marginRight">20sp</item>
+    </style>
+
+    <!-- 底部菜单 -->
+    <style name="popwin_anim_style">
+        <item name="android:windowEnterAnimation">@anim/ppwindow_show_anim</item>
+        <item name="android:windowExitAnimation">@anim/ppwindow_hide_anim</item>
+    </style>
+
+    <style name="myTextView">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:gravity">center</item>
+        <item name="android:layout_marginTop">10sp</item>
     </style>
 </resources>

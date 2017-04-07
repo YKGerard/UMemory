@@ -15,7 +15,7 @@ public class User extends DataSupport{
     public User(){
         super();
     }
-    public User(int id,String username,String password,String email){
+    public User(String username,String password,String email){
         this.username=username;
         this.password=password;
         this.email=email;

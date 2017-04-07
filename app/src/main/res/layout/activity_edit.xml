@@ -3,6 +3,8 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/activity_edit"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -83,18 +85,5 @@
         app:backgroundTint="@color/textColorPrimary"
         app:rippleColor="#33728dff"
         android:layout_gravity="bottom|end"
-        android:elevation="8dp" />
-    <android.support.design.widget.FloatingActionButton
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/eFabEdit"
-        android:layout_marginBottom="70dp"
-        android:layout_marginRight="5dp"
-        android:layout_marginLeft="5dp"
-        android:src="@drawable/edit_white"
-        app:backgroundTint="@color/textColorPrimary"
-        app:rippleColor="#33728dff"
-        app:layout_anchor="@id/eFab"
-        app:layout_anchorGravity="top|end"
         android:elevation="8dp" />
 </android.support.design.widget.CoordinatorLayout>

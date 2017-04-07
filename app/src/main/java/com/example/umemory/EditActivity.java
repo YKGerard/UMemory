@@ -18,12 +18,9 @@ import java.util.Date;
 import java.util.List;
 
 public class EditActivity extends AppCompatActivity {
-    private EditText eTitle;
-    private EditText eContent;
+    private EditText eTitle,eContent;
     private TextView eDate;
-    private String title;
-    private String content;
-    private String time;
+    private String title,content,time;
     private List<Memory> memorys;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,9 +33,6 @@ public class EditActivity extends AppCompatActivity {
         eTitle = (EditText)findViewById(R.id.eTitle);
         eContent = (EditText)findViewById(R.id.eContent);
         eDate = (TextView)findViewById(R.id.eDate);
-
-        eTitle.setEnabled(false);
-        eContent.setEnabled(false);
 
         Date date = new Date();
         DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -74,16 +68,6 @@ public class EditActivity extends AppCompatActivity {
                     Intent intent=new Intent(EditActivity.this,HomeActivity.class);
                     startActivity(intent);
                 }
-            }
-        });  //设置一个悬浮按钮监听器
-
-        //悬浮按钮，用于存储记忆
-        FloatingActionButton fabEdit=(FloatingActionButton)findViewById(R.id.eFabEdit);  //获得FloatingActionButton的实例
-        fabEdit.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                eTitle.setEnabled(true);
-                eContent.setEnabled(true);
             }
         });  //设置一个悬浮按钮监听器
     }

@@ -7,4 +7,5 @@
     <color name="textColorPrimary">#000000</color>
     <color name="textHintColor">#c1c1c1</color>
     <color name="colorImage">#fafafa</color>
+    <color name="colorBottomMenu">#33333333</color>
 </resources>
