@@ -50,4 +50,5 @@
         <item name="android:gravity">center</item>
         <item name="android:layout_marginTop">10sp</item>
     </style>
+
 </resources>

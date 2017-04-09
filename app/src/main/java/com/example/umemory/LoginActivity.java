@@ -1,5 +1,6 @@
 package com.example.umemory;
 
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -12,6 +13,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.example.umemory.model.User;
 import org.litepal.crud.DataSupport;
@@ -62,8 +64,8 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 hideKeyboard();
-                String email=l_email.getText().toString();
-                String password=l_password.getText().toString();
+                String email=l_email.getText().toString().trim();
+                String password=l_password.getText().toString().trim();
                 if (!validateEmail(email)){
                     l_emailWrapper.setError("邮箱输入错误");
                 }else if (!validatePassword(password)){
@@ -107,8 +109,13 @@ public class LoginActivity extends AppCompatActivity {
     //邮箱输入验证
     public boolean validateEmail(String email) {
         userList= DataSupport.where("email = ?",email).find(User.class);
-        if (userList.get(0).getEmail()==email){
-            return true;
+        String userEmail=userList.get(0).getEmail().toString().trim();
+        if (!userEmail.equals("")){
+            if (email.equals(userEmail)){
+                return true;
+            }else{
+                return false;
+            }
         }else{
             return false;
         }
@@ -116,8 +123,13 @@ public class LoginActivity extends AppCompatActivity {
 
     //密码输入验证
     public boolean validatePassword(String password) {
-        if (password==userList.get(0).getPassword()){
-            return true;
+        String userPassword=userList.get(0).getPassword().toString().trim();
+        if (!userPassword.equals("")){
+            if (password.equals(userPassword)){
+                return true;
+            }else{
+                return false;
+            }
         }else{
             return false;
         }
@@ -148,10 +160,24 @@ public class LoginActivity extends AppCompatActivity {
                 case R.id.findByEmail:
                     break;
                 case R.id.findByContact:
+                    try {
+                        CopyToClipboard(LoginActivity.this,"客服QQ已复制到剪贴板");
+                        Intent intent = getPackageManager().getLaunchIntentForPackage("com.tencent.mobileqq");
+                        startActivity(intent);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        Toast.makeText(LoginActivity.this,"请检查是否安装QQ",Toast.LENGTH_LONG).show();
+                    }
                     break;
                 default:
                     break;
             }
         }
     };
+
+    public static void CopyToClipboard(Context context,String text){
+        ClipboardManager clip = (ClipboardManager)context.getSystemService(Context.CLIPBOARD_SERVICE);
+        //clip.getText(); // 粘贴
+        clip.setText(text); // 复制
+     }
 }

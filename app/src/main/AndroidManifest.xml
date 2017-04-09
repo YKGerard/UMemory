@@ -19,13 +19,13 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".SearchActivity" />
+        <activity android:name=".SearchActivity"/>
         <activity android:name=".LoginActivity" />
         <activity android:name=".RegisterActivity" />
         <activity android:name=".AboutActivity" />
         <activity android:name=".FeedbackActivity" />
         <activity android:name=".SettingActivity" />
-        <activity android:name=".PersonActivity"></activity>
+        <activity android:name=".PersonActivity"/>
     </application>
 
 </manifest>
