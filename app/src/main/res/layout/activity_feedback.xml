@@ -5,6 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
     tools:context="com.example.umemory.FeedbackActivity">
     <ImageView
         android:layout_width="wrap_content"
@@ -38,4 +40,13 @@
         android:id="@+id/f_content"
         android:background="@color/colorImage"
         android:hint="@string/f_content"/>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_margin="5sp"
+        android:background="@color/textHintColor"/>
+    <Button
+        style="@style/button2"
+        android:id="@+id/submit"
+        android:text="提交"/>
 </LinearLayout>

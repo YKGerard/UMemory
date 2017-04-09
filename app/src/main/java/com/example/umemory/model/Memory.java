@@ -9,8 +9,8 @@ import org.litepal.crud.DataSupport;
 public class Memory extends DataSupport{
     private int id;
     private String title;
-    private String category;
     private String content;
+    private String category;
     private String date;
 
     public Memory(){
