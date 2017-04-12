@@ -1,6 +1,8 @@
 package com.example.umemory;
 
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Canvas;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
@@ -9,16 +11,20 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.support.v7.widget.helper.ItemTouchHelper;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ListAdapter;
+import android.widget.Toast;
 
 import com.example.umemory.model.Memory;
 import com.example.umemory.model.User;
@@ -36,11 +42,10 @@ public class HomeActivity extends AppCompatActivity {
 
     private DrawerLayout drawerLayout;//创建活动菜单对象
     private SwipeRefreshLayout swipeRefresh;//创建下拉刷新对象
-    private List<Memory> memoryList = new ArrayList<>();  //创建一个List<Memory>对象
+    private List<Memory> memoryList;  //创建一个List<Memory>对象
     private MemoryAdapter adapter;  //创建MemoryAdapter的实例
-    private int userId;  //创建userId变量获取用户信息
     private Button userInformation;
-    private List<User> userInfo;
+    private RecyclerView recyclerView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,17 +60,16 @@ public class HomeActivity extends AppCompatActivity {
             memory.save();
         }
 
-        final Intent intent=getIntent();
-        userId=intent.getIntExtra("userId",-1);
 
-        initMemory();  //加载用户记忆内容
 
         //设置滚动列表
-        RecyclerView recyclerView=(RecyclerView)findViewById(R.id.recycler_view);  //获得RecyclerView的实例
+        recyclerView=(RecyclerView)findViewById(R.id.recycler_view);  //获得RecyclerView的实例
         GridLayoutManager layoutManager=new GridLayoutManager(this,1);  //指定RecyclerView的布局为网格布局
         recyclerView.setLayoutManager(layoutManager);
-        adapter = new MemoryAdapter(memoryList);  //将数据传入MemoryAdapter构造函数中
-        recyclerView.setAdapter(adapter);  //完成适配器设置
+        /*adapter = new MemoryAdapter(memoryList);  //将数据传入MemoryAdapter构造函数中
+        recyclerView.setAdapter(adapter);  //完成适配器设置*/
+
+        initMemory();  //加载用户记忆内容
 
         //使用ToolBar替换ActionBar
         Toolbar toolbar=(Toolbar)findViewById(R.id.toolbar);  //获得ToolBar实例
@@ -95,13 +99,9 @@ public class HomeActivity extends AppCompatActivity {
         userInformation.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (userId!=-1){
-                    userInfo=DataSupport.where("id = ?",""+userId).find(User.class);
-                    userInformation.setText(userInfo.get(0).getUsername()+"\n"+userInfo.get(0).getEmail());
-                }else {
                     Intent intent_login = new Intent(HomeActivity.this, LoginActivity.class);
                     startActivity(intent_login);
-                }
+
             }
         });
         navView.setCheckedItem(R.id.nav_person);  //将person菜单项设置为默认选中
@@ -142,7 +142,7 @@ public class HomeActivity extends AppCompatActivity {
             }
         });  //设置一个下拉刷新监听器
 
-        ItemTouchHelper.Callback mCallback=new ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP|ItemTouchHelper.DOWN,ItemTouchHelper.RIGHT) {
+        ItemTouchHelper.Callback mCallback=new ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP|ItemTouchHelper.DOWN,ItemTouchHelper.RIGHT|ItemTouchHelper.LEFT) {
             @Override
             public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
                 /*int fromPosition = viewHolder.getAdapterPosition();//得到拖动ViewHolder的position
@@ -203,7 +203,7 @@ public class HomeActivity extends AppCompatActivity {
             @Override
             public void run() {  //开启一个线程
                 try {
-                    Thread.sleep(2000);  //线程沉睡 2 秒钟
+                    Thread.sleep(1000);  //线程沉睡 1 秒钟
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -211,7 +211,6 @@ public class HomeActivity extends AppCompatActivity {
                     @Override
                     public void run() {
                         initMemory();  //重新生成数据
-                        adapter.notifyDataSetChanged();  //通知数据发生了变化
                         swipeRefresh.setRefreshing(false);  //表示刷新事件结束，并隐藏刷新进度条
                     }
                 });
@@ -221,7 +220,9 @@ public class HomeActivity extends AppCompatActivity {
 
     //加载数据库中的数据
     private void initMemory(){
-        memoryList = DataSupport.order("id desc").find(Memory.class);//根据ID倒序排列查找并存储到memoryList中
+            memoryList = DataSupport.order("id desc").find(Memory.class);
+        adapter=new MemoryAdapter(memoryList);
+            recyclerView.setAdapter(adapter);
     }
 
     //添加ToolBar菜单
@@ -236,10 +237,12 @@ public class HomeActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch(item.getItemId()){
             case R.id.category:
+                Intent intent_category = new Intent(this,CategoryActivity.class);
+                startActivityForResult(intent_category,1);
                 break;
             case R.id.search:
-                Intent intent=new Intent(this,SearchActivity.class);
-                startActivity(intent);
+                Intent intent_search=new Intent(this,SearchActivity.class);
+                startActivity(intent_search);
                 break;
             case android.R.id.home:  //导航按钮点击事件
                 drawerLayout.openDrawer(GravityCompat.START);  //展示滑动菜单
@@ -248,5 +251,22 @@ public class HomeActivity extends AppCompatActivity {
                 break;
         }
         return true;
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        switch (requestCode){
+            case 1:
+                if (resultCode == RESULT_OK){
+                    String category = data.getStringExtra("category");
+                    if (category.equals("全部")) {
+                        memoryList = DataSupport.order("id desc").find(Memory.class);
+                    }else {
+                        memoryList = DataSupport.where("category = ?", category).find(Memory.class);
+                    }
+                    adapter = new MemoryAdapter(memoryList);
+                    recyclerView.setAdapter(adapter);
+                }
+        }
     }
 }

@@ -19,6 +19,7 @@ import com.example.umemory.model.Memory;
 
 import org.litepal.crud.DataSupport;
 
+import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -64,6 +65,7 @@ public class EditActivity extends AppCompatActivity {
         spinnerAdapter = new ArrayAdapter<String>(this,android.R.layout.simple_spinner_item,spinnerList);
         eSpinner.setAdapter(spinnerAdapter);
 
+
         //切换类别
         eSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             //某类别被选中时设置为默认类别，若新建则调用新建类别方法
@@ -75,6 +77,7 @@ public class EditActivity extends AppCompatActivity {
                     category=spinnerAdapter.getItem(position);
                 }
             }
+
             //未选中类别时设置为未分类
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
@@ -107,6 +110,7 @@ public class EditActivity extends AppCompatActivity {
                     memory.updateAll("id = ?",""+memorys.get(0).getId());
                     Intent intent=new Intent(EditActivity.this,HomeActivity.class);
                     startActivity(intent);
+                    finish();
                 }else if (title==null&&content!=null){
                     title="无标题";
                     Memory memory = new Memory();
@@ -116,6 +120,7 @@ public class EditActivity extends AppCompatActivity {
                     memory.update(memorys.get(0).getId());
                     Intent intent=new Intent(EditActivity.this,HomeActivity.class);
                     startActivity(intent);
+                    finish();
                 }
             }
         });  //设置一个悬浮按钮监听器
@@ -124,8 +129,7 @@ public class EditActivity extends AppCompatActivity {
     //新建类别，弹出一个dialog提供输入
     private void showInputDialog() {
         newCategory = new EditText(EditActivity.this);
-        AlertDialog.Builder inputDialog =
-                new AlertDialog.Builder(EditActivity.this);
+        AlertDialog.Builder inputDialog = new AlertDialog.Builder(EditActivity.this);
         inputDialog.setTitle("请输入你要新建的类别名").setView(newCategory);
         inputDialog.setPositiveButton("确定",
                 new DialogInterface.OnClickListener() {

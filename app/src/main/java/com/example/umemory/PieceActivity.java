@@ -84,17 +84,19 @@ public class PieceActivity extends AppCompatActivity {
             public void onClick(View v) {
                 title=pTitle.getText().toString().trim();
                 content=pContent.getText().toString().trim();
-                if (title.equals("")){
+                if (title!=null){
                     Memory memory = new Memory(title,content,category,time);
                     memory.save();
                     Intent intent=new Intent(PieceActivity.this,HomeActivity.class);
                     startActivity(intent);
-                }else if (title.equals("")&&content.equals("")){
+                    finish();
+                }else if (title==null&&content!=null){
                     title="无标题";
                     Memory memory = new Memory(title,content,category,time);
                     memory.save();
                     Intent intent=new Intent(PieceActivity.this,HomeActivity.class);
                     startActivity(intent);
+                    finish();
                 }
             }
         });  //设置一个悬浮按钮监听器
