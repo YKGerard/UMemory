@@ -16,47 +16,67 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.umemory.model.User;
+
 import org.litepal.crud.DataSupport;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import cn.bmob.v3.Bmob;
+import cn.bmob.v3.BmobConfig;
+import cn.bmob.v3.BmobObject;
+import cn.bmob.v3.BmobQuery;
+import cn.bmob.v3.exception.BmobException;
+import cn.bmob.v3.listener.FindListener;
+import cn.bmob.v3.listener.QueryListener;
+
 public class LoginActivity extends AppCompatActivity {
-    private TextInputLayout l_emailWrapper,l_passwordlWrapper;
-    private Button login,forgetPassword,register;
+    private TextInputLayout l_emailWrapper, l_passwordlWrapper;
+    private Button login, forgetPassword, register;
     private BottomMenu menuWindow;
-    private EditText l_email,l_password;
+    private EditText l_email, l_password;
     private CheckBox remenberPass;
     private SharedPreferences pref;
     private SharedPreferences.Editor editor;
-    private List<User> userList = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-        l_emailWrapper=(TextInputLayout)findViewById(R.id.l_emailWrapper);
-        l_passwordlWrapper=(TextInputLayout)findViewById(R.id.l_passwordWrapper);
-        l_email=(EditText)findViewById(R.id.l_email);
-        l_password=(EditText)findViewById(R.id.l_password);
-        login=(Button)findViewById(R.id.login);
-        forgetPassword=(Button)findViewById(R.id.forgetPassword);
-        register=(Button)findViewById(R.id.l_newUser);
-        remenberPass=(CheckBox)findViewById(R.id.remenber_pass);
-        pref= getSharedPreferences("user",MODE_PRIVATE);
-        boolean isRemenber = pref.getBoolean("remenber_password",false);
+        l_emailWrapper = (TextInputLayout) findViewById(R.id.l_emailWrapper);
+        l_passwordlWrapper = (TextInputLayout) findViewById(R.id.l_passwordWrapper);
+        l_email = (EditText) findViewById(R.id.l_email);
+        l_password = (EditText) findViewById(R.id.l_password);
+        login = (Button) findViewById(R.id.login);
+        forgetPassword = (Button) findViewById(R.id.forgetPassword);
+        register = (Button) findViewById(R.id.l_newUser);
+        remenberPass = (CheckBox) findViewById(R.id.remenber_pass);
+        pref = getSharedPreferences("user", MODE_PRIVATE);
+        boolean isRemenber = pref.getBoolean("remenber_password", false);
 
-        if (isRemenber){
+        //第一：默认初始化
+        //Bmob.initialize(this, "Your Application ID");
+        //第二：自v3.4.7版本开始,设置BmobConfig,允许设置请求超时时间、文件分片上传时每片的大小、文件的过期时间(单位为秒)，
+        BmobConfig config = new BmobConfig.Builder(this)
+                .setApplicationId("3892e7b2105ce8a393aab6e33262ffc7")////设置appkey
+                .setConnectTimeout(30)////请求超时时间（单位为秒）：默认15s
+                .setUploadBlockSize(1024 * 1024)////文件分片上传时每片的大小（单位字节），默认512*1024
+                .setFileExpiration(2500)////文件的过期时间(单位为秒)：默认1800s
+                .build();
+        Bmob.initialize(config);
+
+        if (isRemenber) {
             //将邮箱和密码都设置到文本框中
-            String email = pref.getString("email","");
-            String password = pref.getString("password","");
+            String email = pref.getString("username", "");
+            String password = pref.getString("password", "");
             l_email.setText(email);
             l_password.setText(password);
             remenberPass.setChecked(true);
         }
 
-        l_emailWrapper.setHint("邮箱");
+        l_emailWrapper.setHint("用户名或邮箱");
         l_passwordlWrapper.setHint("密码");
 
         //登录按钮事件
@@ -64,17 +84,58 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 hideKeyboard();
-                String email=l_email.getText().toString().trim();
-                String password=l_password.getText().toString().trim();
-                if (!validateEmail(email)){
-                    l_emailWrapper.setError("邮箱输入错误");
-                }else if (!validatePassword(password)){
-                    l_passwordlWrapper.setError("密码输入错误");
-                }else{
-                    l_emailWrapper.setErrorEnabled(false);
-                    l_passwordlWrapper.setErrorEnabled(false);
-                    doLogin(email,password);
-                }
+                final String emailOrUsername = l_email.getText().toString().trim();
+                final String password = l_password.getText().toString().trim();
+
+                //查询用户名是否存在
+                BmobQuery<User> bmobUsername = new BmobQuery<User>();
+                bmobUsername.addWhereEqualTo("username", emailOrUsername);
+                bmobUsername.findObjects(new FindListener<User>() {
+                    @Override
+                    public void done(List<User> list, BmobException e) {
+                        if (e == null) {
+                            //查询用户名成功,判断密码是否正确
+                            BmobQuery<User> bmobPassword = new BmobQuery<User>();
+                            bmobPassword.addWhereEqualTo("password", password);
+                            bmobPassword.findObjects(new FindListener<User>() {
+                                @Override
+                                public void done(List<User> list, BmobException e) {
+                                    if (e == null) {
+                                        doLogin(list);//密码正确
+                                    } else {
+                                        Toast.makeText(LoginActivity.this, "密码错误，请重新填写", Toast.LENGTH_SHORT).show();
+                                    }
+                                }
+                            });
+                        } else {
+                            //查询失败，用户名不存在，查询邮箱
+                            BmobQuery<User> bmobEmail = new BmobQuery<User>();
+                            bmobEmail.addWhereEqualTo("email", emailOrUsername);
+                            bmobEmail.findObjects(new FindListener<User>() {
+                                @Override
+                                public void done(List<User> list, BmobException e) {
+                                    if (e == null) {
+                                        //查询邮箱成功,判断密码是否正确
+                                        BmobQuery<User> bmobPassword = new BmobQuery<User>();
+                                        bmobPassword.addWhereEqualTo("password", password);
+                                        bmobPassword.findObjects(new FindListener<User>() {
+                                            @Override
+                                            public void done(List<User> list, BmobException e) {
+                                                if (e == null) {
+                                                    doLogin(list);//密码正确
+                                                } else {
+                                                    Toast.makeText(LoginActivity.this, "密码错误，请重新填写", Toast.LENGTH_SHORT).show();
+                                                }
+                                            }
+                                        });
+                                    } else {
+                                        Toast.makeText(LoginActivity.this, "用户名或邮箱错误，请重新填写", Toast.LENGTH_SHORT).show();
+                                    }
+                                }
+                            });
+                        }
+                    }
+                });
             }
         });
 
@@ -91,8 +152,8 @@ public class LoginActivity extends AppCompatActivity {
         register.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent=new Intent(LoginActivity.this,RegisterActivity.class);
-                startActivity(intent);
+                Intent intent = new Intent(LoginActivity.this, RegisterActivity.class);
+                startActivityForResult(intent, 2);
             }
         });
     }
@@ -106,54 +167,25 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
-    //邮箱输入验证
-    public boolean validateEmail(String email) {
-        userList= DataSupport.where("email = ?",email).find(User.class);
-        String userEmail=userList.get(0).getEmail().toString().trim();
-        if (!userEmail.equals("")){
-            if (email.equals(userEmail)){
-                return true;
-            }else{
-                return false;
-            }
-        }else{
-            return false;
-        }
-    }
-
-    //密码输入验证
-    public boolean validatePassword(String password) {
-        String userPassword=userList.get(0).getPassword().toString().trim();
-        if (!userPassword.equals("")){
-            if (password.equals(userPassword)){
-                return true;
-            }else{
-                return false;
-            }
-        }else{
-            return false;
-        }
-    }
-
     //执行登录操作
-    public void doLogin(String email,String password){
+    public void doLogin(List<User> user) {
         editor = pref.edit();
-        if (remenberPass.isChecked()){
-            editor.putBoolean("remember_password",true);
-            editor.putString("email",email);
-            editor.putString("password",password);
-        }else{
+        if (remenberPass.isChecked()) {
+            editor.putBoolean("remember_password", true);
+            editor.putString("username", user.get(0).getUsername());
+            editor.putString("password", user.get(0).getPassword());
+        } else {
             editor.clear();
         }
         editor.apply();
-        Intent intent = new Intent(LoginActivity.this,HomeActivity.class);
-        intent.putExtra("userId",userList.get(0).getId());
+        Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
+        intent.putExtra("userId", user.get(0).getId());
         startActivity(intent);
         finish();
     }
 
     //定义点击事件内部类
-    private View.OnClickListener clickListener = new View.OnClickListener(){
+    private View.OnClickListener clickListener = new View.OnClickListener() {
 
         public void onClick(View v) {
             switch (v.getId()) {
@@ -161,12 +193,12 @@ public class LoginActivity extends AppCompatActivity {
                     break;
                 case R.id.findByContact:
                     try {
-                        CopyToClipboard(LoginActivity.this,"客服QQ已复制到剪贴板");
+                        CopyToClipboard(LoginActivity.this, "客服QQ号码已复制到剪贴板");
                         Intent intent = getPackageManager().getLaunchIntentForPackage("com.tencent.mobileqq");
                         startActivity(intent);
                     } catch (Exception e) {
                         e.printStackTrace();
-                        Toast.makeText(LoginActivity.this,"请检查是否安装QQ",Toast.LENGTH_LONG).show();
+                        Toast.makeText(LoginActivity.this, "请检查是否安装QQ", Toast.LENGTH_LONG).show();
                     }
                     break;
                 default:
@@ -175,9 +207,20 @@ public class LoginActivity extends AppCompatActivity {
         }
     };
 
-    public static void CopyToClipboard(Context context,String text){
-        ClipboardManager clip = (ClipboardManager)context.getSystemService(Context.CLIPBOARD_SERVICE);
+    public static void CopyToClipboard(Context context, String text) {
+        ClipboardManager clip = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
         //clip.getText(); // 粘贴
         clip.setText(text); // 复制
-     }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        switch (requestCode) {
+            case 2:
+                if (resultCode == RESULT_OK) {
+                    String username = data.getStringExtra("username");
+                    l_email.setText(username);
+                }
+        }
+    }
 }

@@ -1,13 +1,13 @@
 package com.example.umemory.model;
 
-import org.litepal.crud.DataSupport;
+import cn.bmob.v3.BmobObject;
 
 /**
  * Created by ${HYK} on 2017/3/26.
  */
 
-public class User extends DataSupport{
-    private int id;
+public class User extends BmobObject{
+    private String id;
     private String username;
     private String password;
     private String email;
@@ -15,17 +15,18 @@ public class User extends DataSupport{
     public User(){
         super();
     }
-    public User(String username,String password,String email){
+
+    public User(String email,String username,String password){
+        this.email=email;
         this.username=username;
         this.password=password;
-        this.email=email;
     }
 
-    public int getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(String id) {
         this.id = id;
     }
 
