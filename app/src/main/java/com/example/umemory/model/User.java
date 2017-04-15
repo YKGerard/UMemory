@@ -7,7 +7,6 @@ import cn.bmob.v3.BmobObject;
  */
 
 public class User extends BmobObject{
-    private String id;
     private String username;
     private String password;
     private String email;
@@ -20,14 +19,6 @@ public class User extends BmobObject{
         this.email=email;
         this.username=username;
         this.password=password;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
     }
 
     public String getUsername() {

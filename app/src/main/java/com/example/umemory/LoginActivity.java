@@ -53,8 +53,8 @@ public class LoginActivity extends AppCompatActivity {
         forgetPassword = (Button) findViewById(R.id.forgetPassword);
         register = (Button) findViewById(R.id.l_newUser);
         remenberPass = (CheckBox) findViewById(R.id.remenber_pass);
-        pref = getSharedPreferences("user", MODE_PRIVATE);
-        boolean isRemenber = pref.getBoolean("remenber_password", false);
+        pref = PreferenceManager.getDefaultSharedPreferences(this);
+        boolean isRemenber = pref.getBoolean("remember_password", false);
 
         //第一：默认初始化
         //Bmob.initialize(this, "Your Application ID");
@@ -84,55 +84,23 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 hideKeyboard();
-                final String emailOrUsername = l_email.getText().toString().trim();
+                final String email = l_email.getText().toString().trim();
                 final String password = l_password.getText().toString().trim();
-
-                //查询用户名是否存在
-                BmobQuery<User> bmobUsername = new BmobQuery<User>();
-                bmobUsername.addWhereEqualTo("username", emailOrUsername);
+                //查询邮箱是否存在
+                BmobQuery<User> bmobUsername = new BmobQuery<>();
+                bmobUsername.addWhereEqualTo("email", email);
                 bmobUsername.findObjects(new FindListener<User>() {
                     @Override
                     public void done(List<User> list, BmobException e) {
                         if (e == null) {
-                            //查询用户名成功,判断密码是否正确
-                            BmobQuery<User> bmobPassword = new BmobQuery<User>();
-                            bmobPassword.addWhereEqualTo("password", password);
-                            bmobPassword.findObjects(new FindListener<User>() {
-                                @Override
-                                public void done(List<User> list, BmobException e) {
-                                    if (e == null) {
+                            //查询邮箱成功,判断密码是否正确
+                            if (list.get(0).getPassword().equals(password)){
                                         doLogin(list);//密码正确
                                     } else {
                                         Toast.makeText(LoginActivity.this, "密码错误，请重新填写", Toast.LENGTH_SHORT).show();
                                     }
-                                }
-                            });
                         } else {
-                            //查询失败，用户名不存在，查询邮箱
-                            BmobQuery<User> bmobEmail = new BmobQuery<User>();
-                            bmobEmail.addWhereEqualTo("email", emailOrUsername);
-                            bmobEmail.findObjects(new FindListener<User>() {
-                                @Override
-                                public void done(List<User> list, BmobException e) {
-                                    if (e == null) {
-                                        //查询邮箱成功,判断密码是否正确
-                                        BmobQuery<User> bmobPassword = new BmobQuery<User>();
-                                        bmobPassword.addWhereEqualTo("password", password);
-                                        bmobPassword.findObjects(new FindListener<User>() {
-                                            @Override
-                                            public void done(List<User> list, BmobException e) {
-                                                if (e == null) {
-                                                    doLogin(list);//密码正确
-                                                } else {
-                                                    Toast.makeText(LoginActivity.this, "密码错误，请重新填写", Toast.LENGTH_SHORT).show();
-                                                }
-                                            }
-                                        });
-                                    } else {
-                                        Toast.makeText(LoginActivity.this, "用户名或邮箱错误，请重新填写", Toast.LENGTH_SHORT).show();
-                                    }
-                                }
-                            });
+                            Toast.makeText(LoginActivity.this, "用户名或邮箱错误，请重新填写", Toast.LENGTH_SHORT).show();
                         }
                     }
                 });
@@ -179,7 +147,7 @@ public class LoginActivity extends AppCompatActivity {
         }
         editor.apply();
         Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
-        intent.putExtra("userId", user.get(0).getId());
+        intent.putExtra("userId", user.get(0).getObjectId());
         startActivity(intent);
         finish();
     }

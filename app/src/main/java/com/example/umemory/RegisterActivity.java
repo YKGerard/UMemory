@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.Toast;
 
 import com.example.umemory.model.User;
@@ -30,6 +31,7 @@ import cn.bmob.v3.listener.SaveListener;
 public class RegisterActivity extends AppCompatActivity {
     private TextInputLayout r_usernameWrapper,r_emailWrapper,r_passwordlWrapper;
     private Button register,readBtn;
+    private CheckBox agreement;
     private static final String USERNAME_PATTERN = "[A-Za-z0-9_\\-\\u4e00-\\u9fa5]+";  //用户名正则表达式
     private static final String EMAIL_PATTERN ="\\w[-\\w.+]*@([A-Za-z0-9][-A-Za-z0-9]+\\.)+[A-Za-z]{2,14}";  //邮箱正则表达式
     private static final String PASSWORD_PATTERN = "^[0-9a-zA-Z]{6,16}$";  //密码正则表达式
@@ -46,6 +48,7 @@ public class RegisterActivity extends AppCompatActivity {
         r_passwordlWrapper=(TextInputLayout)findViewById(R.id.r_passwordWrapper);
         register=(Button)findViewById(R.id.register);
         readBtn=(Button)findViewById(R.id.readBtn);
+        agreement=(CheckBox)findViewById(R.id.agreement);
 
         r_usernameWrapper.setHint("用户名");
         r_emailWrapper.setHint("邮箱");
@@ -83,6 +86,8 @@ public class RegisterActivity extends AppCompatActivity {
                     r_usernameWrapper.setError("邮箱已注册，请更换邮箱");
                 }*/else if (!validatePassword(password)){
                     r_passwordlWrapper.setError("密码存在非法字符，请重新输入");
+                }else if (!agreement.isChecked()){
+                    Toast.makeText(RegisterActivity.this,"请阅读并同意用户协议",Toast.LENGTH_SHORT).show();
                 }else {
                     doRegister();
                 }
