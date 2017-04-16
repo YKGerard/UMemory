@@ -53,7 +53,7 @@ public class LoginActivity extends AppCompatActivity {
         forgetPassword = (Button) findViewById(R.id.forgetPassword);
         register = (Button) findViewById(R.id.l_newUser);
         remenberPass = (CheckBox) findViewById(R.id.remenber_pass);
-        pref = PreferenceManager.getDefaultSharedPreferences(this);
+        pref = getSharedPreferences("login",MODE_PRIVATE);
         boolean isRemenber = pref.getBoolean("remember_password", false);
 
         //第一：默认初始化
@@ -69,14 +69,14 @@ public class LoginActivity extends AppCompatActivity {
 
         if (isRemenber) {
             //将邮箱和密码都设置到文本框中
-            String email = pref.getString("username", "");
+            String email = pref.getString("email", "");
             String password = pref.getString("password", "");
             l_email.setText(email);
             l_password.setText(password);
             remenberPass.setChecked(true);
         }
 
-        l_emailWrapper.setHint("用户名或邮箱");
+        l_emailWrapper.setHint("邮箱");
         l_passwordlWrapper.setHint("密码");
 
         //登录按钮事件
@@ -100,7 +100,7 @@ public class LoginActivity extends AppCompatActivity {
                                         Toast.makeText(LoginActivity.this, "密码错误，请重新填写", Toast.LENGTH_SHORT).show();
                                     }
                         } else {
-                            Toast.makeText(LoginActivity.this, "用户名或邮箱错误，请重新填写", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(LoginActivity.this, "邮箱错误，请重新填写", Toast.LENGTH_SHORT).show();
                         }
                     }
                 });
@@ -140,7 +140,7 @@ public class LoginActivity extends AppCompatActivity {
         editor = pref.edit();
         if (remenberPass.isChecked()) {
             editor.putBoolean("remember_password", true);
-            editor.putString("username", user.get(0).getUsername());
+            editor.putString("email", user.get(0).getEmail());
             editor.putString("password", user.get(0).getPassword());
         } else {
             editor.clear();
@@ -148,7 +148,7 @@ public class LoginActivity extends AppCompatActivity {
         editor.apply();
         Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
         intent.putExtra("userId", user.get(0).getObjectId());
-        startActivity(intent);
+        setResult(RESULT_OK,intent);
         finish();
     }
 

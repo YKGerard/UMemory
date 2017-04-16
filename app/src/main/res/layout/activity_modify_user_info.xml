@@ -1,13 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/activity_feedback"
+    android:id="@+id/activity_modify_user_info"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:focusable="true"
-    android:focusableInTouchMode="true"
-    tools:context="com.example.umemory.FeedbackActivity">
+    tools:context="com.example.umemory.ModifyUserInfoActivity">
     <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -18,7 +16,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingBottom="10sp"
-        android:text="意见反馈"
+        android:text="修改个人信息"
         android:gravity="center"/>
     <View
         android:layout_width="match_parent"
@@ -27,9 +25,7 @@
         android:background="@color/textHintColor"/>
     <EditText
         style="@style/myEditText"
-        android:id="@+id/f_email"
-        android:background="@color/colorImage"
-        android:hint="您的邮箱，选填，便于我们给您反馈"/>
+        android:id="@+id/modify_username" />
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
@@ -37,9 +33,7 @@
         android:background="@color/textHintColor"/>
     <EditText
         style="@style/myEditText"
-        android:id="@+id/f_content"
-        android:background="@color/colorImage"
-        android:hint="@string/f_content"/>
+        android:id="@+id/modify_email" />
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
@@ -47,6 +41,11 @@
         android:background="@color/textHintColor"/>
     <Button
         style="@style/button2"
-        android:id="@+id/submit"
-        android:text="提交"/>
+        android:id="@+id/modify_confirm"
+        android:text="修改"/>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_margin="5sp"
+        android:background="@color/textHintColor"/>
 </LinearLayout>

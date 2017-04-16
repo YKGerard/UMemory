@@ -38,6 +38,11 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import cn.bmob.v3.Bmob;
+import cn.bmob.v3.BmobQuery;
+import cn.bmob.v3.exception.BmobException;
+import cn.bmob.v3.listener.QueryListener;
+
 public class HomeActivity extends AppCompatActivity {
 
     private DrawerLayout drawerLayout;//创建活动菜单对象
@@ -46,6 +51,7 @@ public class HomeActivity extends AppCompatActivity {
     private MemoryAdapter adapter;  //创建MemoryAdapter的实例
     private Button userInformation;
     private RecyclerView recyclerView;
+    private String userId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -100,7 +106,7 @@ public class HomeActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                     Intent intent_login = new Intent(HomeActivity.this, LoginActivity.class);
-                    startActivity(intent_login);
+                    startActivityForResult(intent_login,2);
 
             }
         });
@@ -111,6 +117,7 @@ public class HomeActivity extends AppCompatActivity {
                 switch(item.getItemId()){
                     case R.id.nav_person:
                         Intent intent_person = new Intent(HomeActivity.this,PersonActivity.class);
+                        intent_person.putExtra("userId",userId);
                         startActivity(intent_person);
                         break;
                     case R.id.nav_setting:
@@ -267,6 +274,20 @@ public class HomeActivity extends AppCompatActivity {
                     adapter = new MemoryAdapter(memoryList);
                     recyclerView.setAdapter(adapter);
                 }
+                break;
+            case 2:
+                if (resultCode == RESULT_OK){
+                    userId = data.getStringExtra("userId");
+                    BmobQuery<User> user = new BmobQuery<>();
+                    user.getObject(userId, new QueryListener<User>() {
+                        @Override
+                        public void done(User user, BmobException e) {
+                            userInformation.setText(user.getUsername()+"\n"+user.getEmail());
+                            userInformation.setEnabled(false);
+                        }
+                    });
+                }
+                break;
         }
     }
 }

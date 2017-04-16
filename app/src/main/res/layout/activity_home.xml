@@ -63,7 +63,6 @@
             />
     </android.support.design.widget.CoordinatorLayout>
 
-
     <!-- 滑动菜单 layout_gravity 属性必须设置 app:menu设置菜单项  app:headerLayout设置菜单头部-->
     <android.support.design.widget.NavigationView
         android:id="@+id/nav_view"
